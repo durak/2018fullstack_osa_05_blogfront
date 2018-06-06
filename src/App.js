@@ -10,7 +10,10 @@ class App extends React.Component {
       blogs: [],
       username: '',
       password: '',
-      user: null
+      user: null,
+      newBlogTitle: '',
+      newBlogAuthor: '',
+      newBlogUrl: ''
     }
   }
 
@@ -45,7 +48,7 @@ class App extends React.Component {
       window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
       this.setState({ username: '', password: '', user })
       this.setState({ user })
-
+      blogService.setToken(user.token)
     } catch (exception) {
       console.log(exception)
     }
@@ -55,6 +58,26 @@ class App extends React.Component {
     e.preventDefault()
     window.localStorage.removeItem('loggedBlogAppUser')
     this.setState({ user: null })
+  }
+
+  addBlog = async (e) => {
+    e.preventDefault()
+    const newBlog = {
+      title: this.state.newBlogTitle,
+      author: this.state.newBlogAuthor,
+      url: this.state.newBlogUrl
+    }
+
+    const savedBlog = await blogService.create(newBlog)
+    
+    this.setState({
+      blogs: this.state.blogs.concat(savedBlog),
+      newBlogTitle: '',
+      newBlogAuthor: '',
+      newBlogUrl: ''
+    })
+
+
   }
 
   render() {
@@ -96,14 +119,53 @@ class App extends React.Component {
       <div>
         {this.state.user === null ?
           loginForm() :
+
           <div>
             {logoutForm()}
             {listBlogs()}
+
+
+            <NewBlogForm
+              addBlog={this.addBlog}
+              newBlog={
+                {
+                  title: this.state.newBlogTitle,
+                  author: this.state.newBlogAuthor,
+                  url: this.state.newBlogUrl
+                }
+              }
+              handleChange={this.handleFieldChange}
+            />
           </div>
         }
+
+
+
       </div>
     )
   }
+}
+
+const NewBlogForm = ({ addBlog, newBlog, handleChange }) => {
+  return (
+    <div>
+      <form onSubmit={addBlog}>
+        <div>
+          title
+          <input type="text" name="newBlogTitle" value={newBlog.title} onChange={handleChange} />
+        </div>
+        <div>
+          author
+          <input type="text" name="newBlogAuthor" value={newBlog.author} onChange={handleChange} />
+        </div>
+        <div>
+          url
+          <input type="text" name="newBlogUrl" value={newBlog.url} onChange={handleChange} />
+        </div>
+        <button type="submit">lisää</button>
+      </form>
+    </div>
+  )
 }
 
 export default App
