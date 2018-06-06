@@ -2,6 +2,7 @@ import React from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Notification from './components/Notification'
 
 class App extends React.Component {
   constructor(props) {
@@ -11,6 +12,8 @@ class App extends React.Component {
       username: '',
       password: '',
       user: null,
+      error: null,
+      message: null,
       newBlogTitle: '',
       newBlogAuthor: '',
       newBlogUrl: ''
@@ -26,6 +29,7 @@ class App extends React.Component {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       this.setState({ user })
+      blogService.setToken(user.token)
     }
   }
 
@@ -50,14 +54,33 @@ class App extends React.Component {
       this.setState({ user })
       blogService.setToken(user.token)
     } catch (exception) {
+
       console.log(exception)
+      this.setState({
+        error: 'wrong username or passowrd'
+      })
+      setTimeout(() => {
+        this.setState({ error: null })
+      }, 5000)
     }
   }
 
   logout = (e) => {
     e.preventDefault()
     window.localStorage.removeItem('loggedBlogAppUser')
-    this.setState({ user: null })
+
+    const usrname = this.state.user.username
+
+    this.setState({
+      user: null,
+      message: `user ${usrname} logged out`
+    })
+    setTimeout(() => {
+      this.setState({ message: null })
+    }, 5000)
+
+
+
   }
 
   addBlog = async (e) => {
@@ -69,15 +92,20 @@ class App extends React.Component {
     }
 
     const savedBlog = await blogService.create(newBlog)
-    
+
+    const msg = `a new blog ${savedBlog.title} by ${savedBlog.author} added`
+
     this.setState({
       blogs: this.state.blogs.concat(savedBlog),
       newBlogTitle: '',
       newBlogAuthor: '',
-      newBlogUrl: ''
+      newBlogUrl: '',
+      message: msg
     })
 
-
+    setTimeout(() => {
+      this.setState({ message: null })
+    }, 5000)
   }
 
   render() {
@@ -117,6 +145,9 @@ class App extends React.Component {
 
     return (
       <div>
+        <Notification message={this.state.error} type="error" />
+        <Notification message={this.state.message} type="message" />
+
         {this.state.user === null ?
           loginForm() :
 
