@@ -18,6 +18,12 @@ class App extends React.Component {
     blogService.getAll().then(blogs =>
       this.setState({ blogs })
     )
+
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      this.setState({ user })
+    }
   }
 
   handleFieldChange = (event) => {
@@ -36,10 +42,19 @@ class App extends React.Component {
         password: this.state.password
       })
 
+      window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
+      this.setState({ username: '', password: '', user })
       this.setState({ user })
+
     } catch (exception) {
       console.log(exception)
     }
+  }
+
+  logout = (e) => {
+    e.preventDefault()
+    window.localStorage.removeItem('loggedBlogAppUser')
+    this.setState({ user: null })
   }
 
   render() {
@@ -61,6 +76,13 @@ class App extends React.Component {
       </div >
     )
 
+    const logoutForm = () => (
+      <div>
+        <p>{this.state.user.name} logged in</p>
+        <button onClick={this.logout}> logout </button>
+      </div>
+    )
+
     const listBlogs = () => (
       <div>
         <h2>blogs</h2>
@@ -75,7 +97,7 @@ class App extends React.Component {
         {this.state.user === null ?
           loginForm() :
           <div>
-            <p>{this.state.user.name} logged in</p>
+            {logoutForm()}
             {listBlogs()}
           </div>
         }
@@ -84,4 +106,4 @@ class App extends React.Component {
   }
 }
 
-export default App;
+export default App
