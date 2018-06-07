@@ -3,6 +3,10 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
+import LoginForm from './components/LoginForm'
+import NewBlogForm from './components/Nbf'
+
 
 class App extends React.Component {
   constructor(props) {
@@ -13,11 +17,9 @@ class App extends React.Component {
       password: '',
       user: null,
       error: null,
-      message: null,
-      newBlogTitle: '',
-      newBlogAuthor: '',
-      newBlogUrl: ''
+      message: null
     }
+    this.newBlogForm = React.createRef()
   }
 
   componentDidMount() {
@@ -78,54 +80,31 @@ class App extends React.Component {
     setTimeout(() => {
       this.setState({ message: null })
     }, 5000)
-
-
-
   }
 
-  addBlog = async (e) => {
-    e.preventDefault()
-    const newBlog = {
-      title: this.state.newBlogTitle,
-      author: this.state.newBlogAuthor,
-      url: this.state.newBlogUrl
+
+  addBlog = async (newBlog) => {
+    try {
+      this.newBlogForm.current.toggleVisibility()
+      const savedBlog = await blogService.create(newBlog)
+
+      const msg = `a new blog ${savedBlog.title} by ${savedBlog.author} added`
+
+      this.setState({
+        blogs: this.state.blogs.concat(savedBlog),
+        message: msg
+      })
+
+      setTimeout(() => {
+        this.setState({ message: null })
+      }, 5000)
+    } catch (exception) {
+
+      console.log(exception)
     }
-
-    const savedBlog = await blogService.create(newBlog)
-
-    const msg = `a new blog ${savedBlog.title} by ${savedBlog.author} added`
-
-    this.setState({
-      blogs: this.state.blogs.concat(savedBlog),
-      newBlogTitle: '',
-      newBlogAuthor: '',
-      newBlogUrl: '',
-      message: msg
-    })
-
-    setTimeout(() => {
-      this.setState({ message: null })
-    }, 5000)
   }
 
   render() {
-
-    const loginForm = () => (
-      <div >
-        <h2> Kirjaudu sisään </h2>
-        <form onSubmit={this.login}>
-          <div>
-            Käyttäjänimi
-            <input type="text" name="username" value={this.state.username} onChange={this.handleFieldChange} />
-          </div>
-          <div>
-            Salasana
-            <input type="password" name="password" value={this.state.password} onChange={this.handleFieldChange} />
-          </div>
-          <button>kirjaudu</button>
-        </form>
-      </div >
-    )
 
     const logoutForm = () => (
       <div>
@@ -149,24 +128,21 @@ class App extends React.Component {
         <Notification message={this.state.message} type="message" />
 
         {this.state.user === null ?
-          loginForm() :
+          <LoginForm
+            handleSubmit={this.login}
+            handleChange={this.handleFieldChange}
+            username={this.state.username}
+            password={this.state.password}
+          />
+
+          :
 
           <div>
             {logoutForm()}
             {listBlogs()}
-
-
-            <NewBlogForm
-              addBlog={this.addBlog}
-              newBlog={
-                {
-                  title: this.state.newBlogTitle,
-                  author: this.state.newBlogAuthor,
-                  url: this.state.newBlogUrl
-                }
-              }
-              handleChange={this.handleFieldChange}
-            />
+            <Togglable buttonLabel="Add new blog" ref={this.newBlogForm}>
+              <NewBlogForm addBlog={this.addBlog} />
+            </Togglable>
           </div>
         }
 
@@ -175,28 +151,6 @@ class App extends React.Component {
       </div>
     )
   }
-}
-
-const NewBlogForm = ({ addBlog, newBlog, handleChange }) => {
-  return (
-    <div>
-      <form onSubmit={addBlog}>
-        <div>
-          title
-          <input type="text" name="newBlogTitle" value={newBlog.title} onChange={handleChange} />
-        </div>
-        <div>
-          author
-          <input type="text" name="newBlogAuthor" value={newBlog.author} onChange={handleChange} />
-        </div>
-        <div>
-          url
-          <input type="text" name="newBlogUrl" value={newBlog.url} onChange={handleChange} />
-        </div>
-        <button type="submit">lisää</button>
-      </form>
-    </div>
-  )
 }
 
 export default App
