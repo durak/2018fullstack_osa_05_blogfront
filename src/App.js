@@ -105,9 +105,9 @@ class App extends React.Component {
   }
 
   likeBlog = async (likedBlog) => {
-    try {    
+    try {
       const savedBlog = await blogService.update(likedBlog)
-     
+
       this.setState({
         blogs: this.state.blogs.map(blog => blog.id !== savedBlog.id ? blog : savedBlog)
       })
@@ -126,14 +126,21 @@ class App extends React.Component {
       </div>
     )
 
-    const listBlogs = () => (
-      <div>
-        <h2>blogs</h2>
-        {this.state.blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} handleLike={this.likeBlog} />
-        )}
-      </div>
-    )
+    const listBlogs = () => {
+      let sortedBlogs = [].concat(this.state.blogs)
+      sortedBlogs.sort((a, b) => {
+        return b.likes - a.likes
+      })
+      
+      return (
+        <div>
+          <h2>blogs</h2>
+          {sortedBlogs.map(blog =>
+            <Blog key={blog.id} blog={blog} handleLike={this.likeBlog} />
+          )}
+        </div>
+      )
+    }
 
     return (
       <div>
