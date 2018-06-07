@@ -5,7 +5,7 @@ import loginService from './services/login'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
-import NewBlogForm from './components/Nbf'
+import NewBlogForm from './components/NewBlogForm'
 
 
 class App extends React.Component {
