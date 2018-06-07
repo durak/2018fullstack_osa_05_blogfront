@@ -13,6 +13,13 @@ class Blog extends React.Component {
     this.setState({ fullView: !this.state.fullView })
   }
 
+  like =  () => {
+    let blog =  {...this.props.blog }
+    
+    blog.likes = blog.likes + 1
+    this.props.handleLike(blog)    
+  }
+
   render() {
     const blog = this.props.blog
 
@@ -37,7 +44,7 @@ class Blog extends React.Component {
           <a href={blog.url}>{blog.url}</a>
           <p>
             likes: {blog.likes}
-            <button>like</button>
+            <button onClick={this.like}>like</button>
           </p>
           <p>added by {blog.user.name}</p>
         </div>

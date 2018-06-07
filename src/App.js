@@ -104,6 +104,19 @@ class App extends React.Component {
     }
   }
 
+  likeBlog = async (likedBlog) => {
+    try {    
+      const savedBlog = await blogService.update(likedBlog)
+     
+      this.setState({
+        blogs: this.state.blogs.map(blog => blog.id !== savedBlog.id ? blog : savedBlog)
+      })
+
+    } catch (exception) {
+      console.log(exception)
+    }
+  }
+
   render() {
 
     const logoutForm = () => (
@@ -117,7 +130,7 @@ class App extends React.Component {
       <div>
         <h2>blogs</h2>
         {this.state.blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog} handleLike={this.likeBlog} />
         )}
       </div>
     )
