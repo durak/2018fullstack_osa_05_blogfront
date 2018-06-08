@@ -148,7 +148,7 @@ class App extends React.Component {
         <div>
           <h2>blogs</h2>
           {sortedBlogs.map(blog =>
-            <Blog key={blog.id} blog={blog} handleLike={this.likeBlog} handleDestroy={this.destroyBlog} />
+            <Blog key={blog.id} blog={blog} handleLike={this.likeBlog} handleDestroy={this.destroyBlog} user={this.state.user} />
           )}
         </div>
       )

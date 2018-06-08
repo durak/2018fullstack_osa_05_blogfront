@@ -41,8 +41,12 @@ class Blog extends React.Component {
     const hideWhenVisible = { display: this.state.fullView ? 'none' : '' }
     const showWhenVisible = { display: this.state.fullView ? '' : 'none' }
 
+    const destroyVisible =
+      { display: blog.user && (blog.user.username !== this.props.user.username) ? 'none' : '' }
+
+
     return (
-      <div style={blogStyle}>
+      <div style={blogStyle} >
         <div style={hideWhenVisible}>
           <p onClick={this.toggleVisibility}>{blog.title} {blog.author}</p>
         </div>
@@ -54,7 +58,9 @@ class Blog extends React.Component {
             <button onClick={this.like}>like</button>
           </p>
           <p>added by {blog.user ? blog.user.name : 'anonymous'}</p>
-          <p><button onClick={this.destroy}>delete</button></p>
+          <div style={destroyVisible}>
+            <p><button onClick={this.destroy}>delete</button></p>
+          </div>
         </div>
       </div>
     )
