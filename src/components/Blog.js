@@ -13,11 +13,18 @@ class Blog extends React.Component {
     this.setState({ fullView: !this.state.fullView })
   }
 
-  like =  () => {
-    let blog =  {...this.props.blog }
-    
+  like = () => {
+    let blog = { ...this.props.blog }
+
     blog.likes = blog.likes + 1
-    this.props.handleLike(blog)    
+    this.props.handleLike(blog)
+  }
+
+  destroy = () => {
+    let blog = this.props.blog
+    if (window.confirm(`delete ${blog.title} by ${blog.author}?`)) {
+      this.props.handleDestroy(blog)
+    }
   }
 
   render() {
@@ -46,7 +53,8 @@ class Blog extends React.Component {
             likes: {blog.likes}
             <button onClick={this.like}>like</button>
           </p>
-          <p>added by {blog.user.name}</p>
+          <p>added by {blog.user ? blog.user.name : 'anonymous'}</p>
+          <p><button onClick={this.destroy}>delete</button></p>
         </div>
       </div>
     )

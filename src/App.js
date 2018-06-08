@@ -117,6 +117,18 @@ class App extends React.Component {
     }
   }
 
+  destroyBlog = async (blog) => {
+    try {
+      const response = await blogService.destroy(blog)
+      console.log(response)
+      this.setState({
+        blogs: this.state.blogs.filter(b => b.id !== blog.id)
+      })
+    } catch (exception){
+      console.log(exception)
+    }
+  }
+
   render() {
 
     const logoutForm = () => (
@@ -136,7 +148,7 @@ class App extends React.Component {
         <div>
           <h2>blogs</h2>
           {sortedBlogs.map(blog =>
-            <Blog key={blog.id} blog={blog} handleLike={this.likeBlog} />
+            <Blog key={blog.id} blog={blog} handleLike={this.likeBlog} handleDestroy={this.destroyBlog} />
           )}
         </div>
       )
