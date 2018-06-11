@@ -6,6 +6,7 @@ import { debug } from 'util';
 describe('<Simpleblog />', () => {
   let blogComponent
   let blog
+  let mockHandler
 
   beforeAll(() => {
     blog = {
@@ -14,7 +15,9 @@ describe('<Simpleblog />', () => {
       likes: 99
     }
 
-    blogComponent = shallow(<SimpleBlog blog={blog} />)
+    mockHandler = jest.fn()    
+
+    blogComponent = shallow(<SimpleBlog blog={blog} onClick={mockHandler} />)
   })
 
   it('renders blog title, author and likes', () => {
@@ -23,5 +26,13 @@ describe('<Simpleblog />', () => {
     
     expect(authorTitleDiv.text()).toContain(blog.title)
     expect(likesDiv.text()).toContain(blog.likes)
+  })
+
+  it('after clicking the Like button twice handler function is called twice', () => {
+    const button = blogComponent.find('button')
+    button.simulate('click')
+    button.simulate('click')
+
+    expect(mockHandler.mock.calls.length).toBe(2)
   })
 })
