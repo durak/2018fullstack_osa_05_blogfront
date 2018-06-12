@@ -55,18 +55,18 @@ class Blog extends React.Component {
 
     return (
       <div style={blogStyle} >
-        <div style={hideWhenVisible}>
-          <p onClick={this.toggleVisibility}>{blog.title} {blog.author}</p>
+        <div style={hideWhenVisible} className="minimized">
+          <p className="clickable" onClick={this.toggleVisibility}>{blog.title} {blog.author}</p>
         </div>
-        <div style={showWhenVisible}>
-          <p onClick={this.toggleVisibility}>{blog.title} {blog.author}</p>
+        <div style={showWhenVisible} className="maximized">
+          <p className="clickable" onClick={this.toggleVisibility}>{blog.title} {blog.author}</p>
           <a href={blog.url}>{blog.url}</a>
           <p>
             likes: {blog.likes}
             <button onClick={this.like}>like</button>
           </p>
-          <p>added by {blog.user ? blog.user.name : 'anonymous'}</p>
-          <div style={destroyVisible}>
+          <p className="addedBy">added by {blog.user ? blog.user.name : 'anonymous'}</p>
+          <div className="destroy" style={destroyVisible}>
             <p><button onClick={this.destroy}>delete</button></p>
           </div>
         </div>
